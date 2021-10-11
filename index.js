@@ -65,16 +65,19 @@ const questions = [
 ];
 
 function writeHtmlFile(filename) {
-    fs.writeFile(`./${filename}`, generateHTML(), (err) =>
+    if (!fs.existsSync('./output')) {
+        fs.mkdirSync('./output');
+    }
+    fs.writeFile(`./output/${filename}`, generateHTML(), (err) =>
         err ? console.error(err) : console.log('HTML file created!')
     );
 }
 
 function writeStyleToFile(filename) {
-    if (!fs.existsSync('./css')) {
-        fs.mkdirSync('./css');
+    if (!fs.existsSync('./output/css')) {
+        fs.mkdirSync('./output/css');
     }
-    fs.writeFile(`./css/${filename}`, generateCSS(), (err) =>
+    fs.writeFile(`./output/css/${filename}`, generateCSS(), (err) =>
         err ? console.error(err) : console.log('CSS file created!')
     );
 }
