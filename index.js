@@ -38,23 +38,23 @@ const questions = [
 ];
 
 function writeHtmlFile(filename) {
-    fs.writeFile(`./output/${filename}`, generateHTML(), (err) =>
+    fs.writeFile(`./dist/${filename}`, generateHTML(), (err) =>
         err ? console.error(err) : console.log('HTML file created!')
     );
 }
 
 function writeStyleToFile(filename) {
-    fs.writeFile(`./output/css/${filename}`, generateCSS(), (err) =>
+    fs.writeFile(`./dist/css/${filename}`, generateCSS(), (err) =>
         err ? console.error(err) : console.log('CSS file created!')
     );
 }
 
 function produceDocs() {
-    if (!fs.existsSync('./output')) {
-        fs.mkdirSync('./output');
+    if (!fs.existsSync('./dist')) {
+        fs.mkdirSync('./dist');
     }
-    if (!fs.existsSync('./output/css')) {
-        fs.mkdirSync('./output/css');
+    if (!fs.existsSync('./dist/css')) {
+        fs.mkdirSync('./dist/css');
     }
     writeStyleToFile("style.css");
     writeHtmlFile("index.html");
