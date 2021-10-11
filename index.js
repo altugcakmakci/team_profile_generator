@@ -1,36 +1,9 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-
-function Teammember(mname, mid, memail, mdet, mtype) {
-    this.mname = mname;
-    this.mid = mid;
-    this.memail = memail;
-    this.mdet = mdet;
-    this.mtype = mtype;
-}
-
-Teammember.prototype.getHtmlBlock = function () {
-    let detail = "Office number";
-    if (this.mtype !== "Team manager") {
-        detail = "GitHub";
-    }
-    let icontxt = "<i class='fas fa-users'></i>";
-    if (this.mtype === "Engineer") {
-        icontxt = "<i class='fas fa-user-clock'></i>";
-    } else if (this.mtype === "Intern") {
-        icontxt = "<i class='fas fa-user-edit'></i>";
-    } 
-    let htmlBlock = `<div class="col-12 col-md-3 col-xl-3 box_item">
-    <div class='box_header'>
-    <p class="body_text">${this.mname}</p>
-    <p class="body_text">${icontxt} ${this.mtype}</p>
-    </div>
-    <p class="body_text">Id: ${this.mid}</p>
-    <p class="body_text">Email: ${this.memail}</p>
-    <p class="body_text">${detail}: ${this.mdet}</p>
-    </div>`;
-    return htmlBlock;
-};
+const Employee = require('./lib/employee');
+const Manager = require('./lib/manager');
+const Engineer = require('./lib/engineer');
+const Intern = require('./lib/intern');
 
 let teammembers = [];
 
@@ -77,7 +50,6 @@ function writeStyleToFile(filename) {
 }
 
 function produceDocs() {
-    console.log("Produce docs");
     if (!fs.existsSync('./output')) {
         fs.mkdirSync('./output');
     }
@@ -89,13 +61,45 @@ function produceDocs() {
 }
 
 function addTeamMember(type, answer) {
-    let newmember = new Teammember(answer.membername, answer.memberid, answer.memberemail, answer.memberdet, type);
-    teammembers.push(newmember);
+    if (type==="Team manager"){
+        let newMember = new Manager(answer.membername, answer.memberid, answer.memberemail, answer.memberdet);
+        teammembers.push(newMember);
+    } else if (type==="Engineer"){
+        let newMember = new Engineer(answer.membername, answer.memberid, answer.memberemail, answer.memberdet);
+        teammembers.push(newMember);
+    } else {
+        let newMember = new Intern(answer.membername, answer.memberid, answer.memberemail, answer.memberdet);
+        teammembers.push(newMember);
+    }
     if (answer.membertype === "I am done") {
         produceDocs();
     }
 }
 
+function getHtmlBlock(member) {
+    let detail;
+    let icontxt = "<i class='fas fa-users'></i>";
+    if (member.getRole() === "Engineer") {
+        detail = "GitHub: "+member.getGithub();
+        icontxt = "<i class='fas fa-user-clock'></i>";
+    } else if (member.getRole() === "Intern") {
+        detail = "School: "+member.getSchool();
+        icontxt = "<i class='fas fa-user-edit'></i>";
+    } else {
+        detail = "Office: "+member.getOfficeNumber();
+    }
+    
+    let htmlBlock = `<div class="col-12 col-md-3 col-xl-3 box_item">
+    <div class='box_header'>
+    <p class="body_text">${member.getName()}</p>
+    <p class="body_text">${icontxt} ${member.getRole()}</p>
+    </div>
+    <p class="body_text">Id: ${member.getId()}</p>
+    <p class="body_text">Email: ${member.getEmail()}</p>
+    <p class="body_text">${detail}</p>
+    </div>`;
+    return htmlBlock;
+};
 
 function generateHTML() {
     let retStr = `<!DOCTYPE html>
@@ -121,7 +125,7 @@ function generateHTML() {
    `;
 
     for (const teammember of teammembers) {
-        retStr = retStr + teammember.getHtmlBlock();
+        retStr = retStr + getHtmlBlock(teammember);
     }
 
     retStr = retStr + `
@@ -168,21 +172,23 @@ body {
 
 
 function getAnswers(type) {
-    console.log("Here3");
     return inquirer.prompt(questions).then((answers) => {
-        console.log(answers.membertype);
         if (answers.membertype === "I am done") {
-            console.log("Here5");
             addTeamMember(type, answers);
             return answers;
         } else {
-            console.log("Here");
             addTeamMember(type, answers);
-            questions[0].message = `What is the ${answers.membertype}'s name?`
-            questions[1].message = `What is the ${answers.membertype}'s id?`
-            questions[2].message = `What is the ${answers.membertype}'s email?`
-            questions[3].message = `What is the ${answers.membertype}'s GitHub username?`
-            console.log("Here2");
+            if (answers.membertype==="Engineer"){
+                questions[0].message = `What is the ${answers.membertype}'s name?`
+                questions[1].message = `What is the ${answers.membertype}'s id?`
+                questions[2].message = `What is the ${answers.membertype}'s email?`
+                questions[3].message = `What is the ${answers.membertype}'s GitHub username?`    
+            } else {
+                questions[0].message = `What is the ${answers.membertype}'s name?`
+                questions[1].message = `What is the ${answers.membertype}'s id?`
+                questions[2].message = `What is the ${answers.membertype}'s email?`
+                questions[3].message = `What is the ${answers.membertype}'s school?`  
+            }
             return getAnswers(answers.membertype);
         }
     });
