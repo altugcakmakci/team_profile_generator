@@ -80,7 +80,7 @@ function getHtmlBlock(member) {
     let detail;
     let icontxt = "<i class='fas fa-users'></i>";
     if (member.getRole() === "Engineer") {
-        detail = "GitHub: "+member.getGithub();
+        detail = `GitHub: <a class='body_text' href="https://github.com/${member.getGithub()}">${member.getGithub()}</a>`;
         icontxt = "<i class='fas fa-user-clock'></i>";
     } else if (member.getRole() === "Intern") {
         detail = "School: "+member.getSchool();
@@ -95,7 +95,7 @@ function getHtmlBlock(member) {
     <p class="body_text">${icontxt} ${member.getRole()}</p>
     </div>
     <p class="body_text">Id: ${member.getId()}</p>
-    <p class="body_text">Email: ${member.getEmail()}</p>
+    <p class="body_text">Email: <a class="body_text" href="mailto:${member.getEmail()}">${member.getEmail()}</a></p>
     <p class="body_text">${detail}</p>
     </div>`;
     return htmlBlock;
@@ -196,7 +196,7 @@ function getAnswers(type) {
 
 function main() {
     getAnswers("Team manager")
-        .then(console.log)
+        .then()
         .catch((error) => { });
 }
 

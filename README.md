@@ -48,4 +48,4 @@ If you have any questions about the repo, open an issue or contact me directly a
 You can find more of my work at (https://github.com/altugcakmakci)
 
 ## Walkthrough
-The walkthrough video that demonstrates the functionality of the application can be found at []
+The walkthrough video that demonstrates the functionality of the application can be found at [https://watch.screencastify.com/v/JGzAd0MyYf0UKVBl9p7f]
